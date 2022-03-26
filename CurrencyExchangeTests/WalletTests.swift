@@ -14,14 +14,12 @@ class WalletTests: XCTestCase {
     
     private var storage: StorageMock!
     private var wallet: Wallet!
-    private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
         
         storage = StorageMock()
         wallet = WalletService(storage: storage)
-        cancellables = []
     }
 
     func testInitialValues() throws {

@@ -28,7 +28,7 @@ extension FeeRule {
     
     static var simpleFee: FeeRule {
         FeeRule { input in
-            guard input.numberOfTransactionsForToday > 5, input.numberOfTotalTransactionForToday < 15 else {
+            guard input.numberOfTransactionsForToday >= 5, input.numberOfTotalTransactionForToday < 15 else {
                 return 0
             }
             
@@ -38,7 +38,7 @@ extension FeeRule {
     
     static var extendedRule: FeeRule {
         FeeRule { input in
-            guard input.numberOfTotalTransactionForToday > 15 else {
+            guard input.numberOfTotalTransactionForToday >= 15 else {
                 return 0
             }
             

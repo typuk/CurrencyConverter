@@ -11,7 +11,7 @@ import XCTest
 
 class ExchangeRateServiceTests: XCTestCase {
 
-    private var exchangeService: ExchangeRateService!
+    private var exchangeService: CurrencyExchangeRateService!
     private var storage: StorageMock!
     private var wallet: WalletMock!
     
@@ -20,7 +20,7 @@ class ExchangeRateServiceTests: XCTestCase {
         
         wallet = WalletMock()
         storage = StorageMock()
-        exchangeService = ExchangeRateServiceImplementation(storage: storage, wallet: wallet)
+        exchangeService = CurrencyExchangeRateServiceImplementation(storage: storage, wallet: wallet)
     }
     
     func testEuroAmountConversion() throws {

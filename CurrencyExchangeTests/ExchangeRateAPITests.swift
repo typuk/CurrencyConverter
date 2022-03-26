@@ -13,14 +13,14 @@ import Combine
 class ExchangeRateAPITests: XCTestCase {
     
     private var dataLoader: DataLoaderMock!
-    private var exchangeRateAPI: ExchangeRateAPI!
+    private var exchangeRateAPI: CurrencyExchangeRateAPI!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
         
         dataLoader = DataLoaderMock()
-        exchangeRateAPI = ExchangeRateAPIService(dataLoader: dataLoader)
+        exchangeRateAPI = CurrencyExchangeRateAPIService(dataLoader: dataLoader)
         cancellables = []
     }
     

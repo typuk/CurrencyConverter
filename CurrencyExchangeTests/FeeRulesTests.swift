@@ -11,8 +11,8 @@ import XCTest
 class FeeRulesTests: XCTestCase {
 
     func testFirstFiveTransactionsForFree() throws {
-        let numberOfTransactionTodayForCurrency = 5
-        let numberOfTotalTransaction = 5
+        let numberOfTransactionTodayForCurrency = 4
+        let numberOfTotalTransaction = 4
         let additionalFee = 0.0
 
         let input = FeeRule.Input(numberOfTransactionsForToday: numberOfTransactionTodayForCurrency,
@@ -25,8 +25,8 @@ class FeeRulesTests: XCTestCase {
     }
     
     func testSmallFee() throws {
-        let numberOfTransactionTodayForCurrency = 6
-        let numberOfTotalTransaction = 6
+        let numberOfTransactionTodayForCurrency = 5
+        let numberOfTotalTransaction = 5
         let additionalFee = 0.0
         
         let input = FeeRule.Input(numberOfTransactionsForToday: numberOfTransactionTodayForCurrency,

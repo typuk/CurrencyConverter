@@ -9,7 +9,7 @@ import Foundation
 import Combine
 @testable import CurrencyExchange
 
-final class ExchangeRateAPIMock: BaseMockable, ExchangeRateAPI {
+final class CurrencyExchangeRateAPIMock: BaseMockable, CurrencyExchangeRateAPI {
     
     func loadExchangeRates() -> AnyPublisher<CurrencyExchangeModel, Error> {
         returnMockable()

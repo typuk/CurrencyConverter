@@ -17,8 +17,8 @@ struct ContentView: View {
                 let storage = StorageService(keyValueStoring: UserDefaults.standard)
                 let wallet = WalletService(storage: storage)
                 let viewModel = CurrencyExchangeViewModel(wallet: wallet,
-                                                          exchangeRateAPIService: ExchangeRateAPIService(dataLoader: HTTPDataLoader()),
-                                                          exchangeRateService: ExchangeRateServiceImplementation(storage: storage, wallet: wallet))
+                                                          exchangeRateAPIService: CurrencyExchangeRateAPIService(dataLoader: HTTPDataLoader()),
+                                                          exchangeRateService: CurrencyExchangeRateServiceImplementation(storage: storage, wallet: wallet))
                 ExchangeView()
                     .environmentObject(viewModel)
             }

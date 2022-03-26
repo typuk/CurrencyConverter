@@ -8,7 +8,7 @@
 import Foundation
 @testable import CurrencyExchange
 
-final class ExchangeRateServiceMock: ExchangeRateService {
+final class CurrencyExchangeRateServiceMock: CurrencyExchangeRateService {
     
     func updateExchnageRates(with model: CurrencyExchangeModel) {
         

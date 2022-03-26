@@ -15,15 +15,15 @@ class CurrencyExchangeViewModelTests: XCTestCase {
     private var viewModel: CurrencyExchangeViewModel!
     
     private var wallet: WalletMock!
-    private var exchangeRateAPIService: ExchangeRateAPIMock!
-    private var exchangeRateService: ExchangeRateServiceMock!
+    private var exchangeRateAPIService: CurrencyExchangeRateAPIMock!
+    private var exchangeRateService: CurrencyExchangeRateServiceMock!
     private var cancellables: Set<AnyCancellable>!
 
     @MainActor override func setUp() {
         super.setUp()
         wallet = WalletMock()
-        exchangeRateAPIService = ExchangeRateAPIMock()
-        exchangeRateService = ExchangeRateServiceMock()
+        exchangeRateAPIService = CurrencyExchangeRateAPIMock()
+        exchangeRateService = CurrencyExchangeRateServiceMock()
         viewModel = CurrencyExchangeViewModel(wallet: wallet, exchangeRateAPIService: exchangeRateAPIService, exchangeRateService: exchangeRateService)
         cancellables = []
     }
@@ -50,7 +50,7 @@ class CurrencyExchangeViewModelTests: XCTestCase {
         viewModel.startLoading()
         
         viewModel.$loadingState // Setting values after viewModel is ready
-            .filter { if case .loaded = $0 { return true } else { return false } }
+            .filter { .loaded == $0 }
             .delay(for: .milliseconds(100), scheduler: RunLoop.main)
             .sink { [viewModel] _ in
                 viewModel?.sellingCurrencyAmount = "80"
@@ -65,18 +65,64 @@ class CurrencyExchangeViewModelTests: XCTestCase {
         XCTAssertEqual(isSubmitEnabled[2], true)
     }
     
-    @MainActor func testSuccessiveCurrencyConversation() throws {
+    @MainActor func testSuccessiveCurrencyConversion() throws {
         wallet.availableBalancesSubject.send([CurrencyBalance(currency: .euro, amount: 100), CurrencyBalance(currency: "USD", amount: 200)])
         exchangeRateAPIService.filename = "CurrencyExchangeModel"
         viewModel.startLoading()
         
         viewModel.$loadingState // Setting values after viewModel is ready
-            .filter { if case .loaded = $0 { return true } else { return false } }
+            .filter { .loaded == $0 }
             .delay(for: .milliseconds(100), scheduler: RunLoop.main)
             .sink { [viewModel] _ in
+                viewModel?.sellingCurrency = "EUR"
+                viewModel?.buyingCurrency = "USD"
                 viewModel?.sellingCurrencyAmount = "80"
                 viewModel?.didTapSubmitButton()
             }
             .store(in: &cancellables)
+        
+        let shouldShowAlert = try awaitPublisher(viewModel.$shouldShowAlert.collect(2).first())
+        
+        XCTAssertEqual(shouldShowAlert[0], false)
+        XCTAssertEqual(shouldShowAlert[1], true)
+        XCTAssertEqual(viewModel.alertMessage?.title, "Conversion Successful")
+    }
+    
+    @MainActor func testLoadingState() throws {
+
+        let subject = PassthroughSubject<Void, Never>()
+        let expectation = expectation(description: "CurrencyExchangeViewModelTests")
+        
+        viewModel = CurrencyExchangeViewModel(wallet: wallet,
+                                              exchangeRateAPIService: exchangeRateAPIService,
+                                              exchangeRateService: exchangeRateService,
+                                              needsUpdate: subject.eraseToAnyPublisher())
+        
+        wallet.availableBalancesSubject.send([CurrencyBalance(currency: .euro, amount: 100), CurrencyBalance(currency: "USD", amount: 200)])
+        exchangeRateAPIService.filename = "CurrencyExchangeModel"
+        
+        var loadingStateEvents: [LoadingState] = []
+        viewModel.$loadingState.prefix(6)
+            .sink(receiveCompletion: { _ in
+                expectation.fulfill()
+            }, receiveValue: {
+                loadingStateEvents.append($0)
+            })
+            .store(in: &cancellables)
+
+        viewModel.startLoading()
+        
+        subject.send(())
+        subject.send(())
+        subject.send(())
+        
+        waitForExpectations(timeout: 2)
+        
+        XCTAssertEqual(loadingStateEvents[0], .isPreparing)
+        XCTAssertEqual(loadingStateEvents[1], .isPreparing)
+        XCTAssertEqual(loadingStateEvents[2], .isLoading(false), "First loading should be self initiated")
+        XCTAssertEqual(loadingStateEvents[3], .isLoading(true), "Loading should be timer initiated")
+        XCTAssertEqual(loadingStateEvents[4], .isLoading(true), "Loading should be timer initiated")
+        XCTAssertEqual(loadingStateEvents[5], .isLoading(true), "Loading should be timer initiated")
     }
 }

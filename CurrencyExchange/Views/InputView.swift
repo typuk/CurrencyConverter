@@ -52,26 +52,6 @@ struct InputView: View {
     }
 }
 
-struct ImageWithCircle: View {
-    @State private var width: CGFloat?
-    
-    let circleColor: Color
-    let imageSystemName: String
-    
-    var body: some View {
-        Image(systemName: imageSystemName)
-            .foregroundColor(.white)
-            .background(GeometryReader { proxy in
-                Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
-            })
-            .onPreferenceChange(WidthKey.self) {
-                self.width = ($0 ?? 0) + 16
-            }
-            .frame(width: width, height: width)
-            .background(Circle().fill(circleColor))
-    }
-}
-
 private extension InputViewType {
     var titleText: String {
         switch self {
@@ -98,13 +78,6 @@ private extension InputViewType {
         case .buy:
             return .green
         }
-    }
-}
-
-struct WidthKey: PreferenceKey {
-    static let defaultValue: CGFloat? = nil
-    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
-        value = value ?? nextValue()
     }
 }
 

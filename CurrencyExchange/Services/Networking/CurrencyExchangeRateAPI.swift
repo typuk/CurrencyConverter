@@ -8,11 +8,11 @@
 import Foundation
 import Combine
 
-protocol ExchangeRateAPI {
+protocol CurrencyExchangeRateAPI {
     func loadExchangeRates() -> AnyPublisher<CurrencyExchangeModel, Error>
 }
 
-class ExchangeRateAPIService: ExchangeRateAPI {
+class CurrencyExchangeRateAPIService: CurrencyExchangeRateAPI {
     
     private let decoder = JSONDecoder()
     private let dataLoader: DataLoader

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-protocol ExchangeRateService {
+protocol CurrencyExchangeRateService {
     func updateExchnageRates(with model: CurrencyExchangeModel)
     func convertCurrency(for transaction: CurrencyExchangeTransaction) throws -> CurrencyExchangeResult
     
@@ -16,7 +16,7 @@ protocol ExchangeRateService {
     func calculateTransactionFee(for transaction: CurrencyExchangeTransaction) throws -> Double
 }
 
-class ExchangeRateServiceImplementation: ExchangeRateService {
+class CurrencyExchangeRateServiceImplementation: CurrencyExchangeRateService {
     
     private var baseCurrency: Currency
     private let storage: Storage
@@ -58,7 +58,7 @@ class ExchangeRateServiceImplementation: ExchangeRateService {
     }
 }
 
-private extension ExchangeRateServiceImplementation {
+private extension CurrencyExchangeRateServiceImplementation {
     
     var todaysTransactionList: TransactionList {
         let todaysDateString = Date().dateString

@@ -8,20 +8,14 @@
 import Foundation
 import Combine
 
-enum LoadingState {
-    case isLoading
-    case loaded
-    case failed(Error)
-}
-
 @MainActor class CurrencyExchangeViewModel: ObservableObject {
     
     private var cancellableBag = Set<AnyCancellable>()
     private var networkingBag = Set<AnyCancellable>()
     
     private let wallet: Wallet
-    private let exchangeRateAPIService: ExchangeRateAPI
-    private let exchangeRateService: ExchangeRateService
+    private let exchangeRateAPIService: CurrencyExchangeRateAPI
+    private let exchangeRateService: CurrencyExchangeRateService
     
     private let currencyExchangeModel = PassthroughSubject<CurrencyExchangeModel, Never>()
     private let didTapSubmitButtonSubject = PassthroughSubject<Void, Never>()
@@ -42,6 +36,8 @@ enum LoadingState {
             .eraseToAnyPublisher()
     }
     
+    private let needsUpdate: AnyPublisher<Void, Never>
+    
     @Published var sellingCurrency: Currency = .euro
     @Published var buyingCurrency: Currency = "USD"
     @Published var sellingCurrencyAmount = ""
@@ -50,24 +46,36 @@ enum LoadingState {
     @Published var currencyBalances: [CurrencyBalance] = []
     @Published var isSubmitEnabled = false
     @Published var shouldShowAlert = false
-    @Published var loadingState: LoadingState = .isLoading
+    @Published var loadingState: LoadingState = .isPreparing
     
     var alertMessage: AlertMessage? = nil { didSet { shouldShowAlert = alertMessage != nil } }
     
-    init(wallet: Wallet, exchangeRateAPIService: ExchangeRateAPI, exchangeRateService: ExchangeRateService) {
+    init(wallet: Wallet,
+         exchangeRateAPIService: CurrencyExchangeRateAPI,
+         exchangeRateService: CurrencyExchangeRateService,
+         needsUpdate: AnyPublisher<Void, Never>? = nil) {
         self.wallet = wallet
         self.exchangeRateAPIService = exchangeRateAPIService
         self.exchangeRateService = exchangeRateService
+        
+        let timer = Timer.publish(every: 15, on: .main, in: .default)
+            .autoconnect()
+            .map { _ in () }
+            .eraseToAnyPublisher()
+        
+        self.needsUpdate = needsUpdate ?? timer
 
         setupBindings()
     }
     
     func startLoading() {
         networkingBag.removeAll()
-        loadingState = .isLoading
-        let timer = Timer.publish(every: 15, on: .main, in: .default).autoconnect().map { _ in () }
+        loadingState = .isPreparing
         
-        Publishers.Merge(Just(()), timer)
+        Publishers.Merge(Just(false), needsUpdate.map { _ in true })
+            .handleEvents(receiveOutput: { [weak self] initialLoading in
+                self?.loadingState = .isLoading(initialLoading)
+            })
             .flatMap { [exchangeRateAPIService] _ in
                 exchangeRateAPIService.loadExchangeRates()
             }
@@ -79,7 +87,7 @@ enum LoadingState {
             }, receiveValue: { [weak self] value in
                 self?.currencyExchangeModel.send(value)
                 
-                if case .isLoading = self?.loadingState {
+                if self?.loadingState != .loaded {
                     self?.loadingState = .loaded
                 }
             })
@@ -120,8 +128,7 @@ private extension CurrencyExchangeViewModel {
             .receive(on: RunLoop.main)
             .assign(to: &$buyingCurrencyAmount)
         
-        didTapSubmitButtonSubject
-            .withLatestFrom(transaction) { _, transaction in transaction }
+        didTapSubmitButtonSubject.withLatestFrom(transaction) { _, transaction in transaction }
             .sink(receiveValue: { [weak self] transaction in
                 self?.convertCurrencies(for: transaction)
             })

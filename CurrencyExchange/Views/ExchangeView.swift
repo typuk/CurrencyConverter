@@ -25,12 +25,18 @@ struct ExchangeView: View {
     
     private var content: AnyView {
         switch viewModel.loadingState {
-        case .isLoading:
+        case .isPreparing:
             return AnyView(loadingView())
         case .loaded:
             return AnyView(loadedView())
         case .failed(let error):
             return AnyView(failedView(error))
+        case .isLoading(let dataCached):
+            if dataCached {
+                return AnyView(loadedView())
+            } else {
+                return AnyView(loadingView())
+            }
         }
     }
 }

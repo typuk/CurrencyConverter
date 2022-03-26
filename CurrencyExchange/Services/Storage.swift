@@ -15,7 +15,6 @@ protocol Storage {
     func currencyBalance() -> [CurrencyBalance]?
 }
 
-// TODO: Replace UserDefaults with CoreData or Realm data bases
 class StorageService: Storage {
     
     private enum StorageKeys: String {
