@@ -171,7 +171,7 @@ private extension CurrencyExchangeViewModel {
         
         let message = "You have converted \(sellingAmount) \(transactionResult.fromCurrency)"
         + " to \(buyingAmount) \(transactionResult.toCurrency). "
-        + "Commission Fee - \(conversionFeeAmount)."
+        + "Commission Fee - \(conversionFeeAmount) \(transactionResult.fromCurrency)."
         
         return AlertMessage(title: "Conversion Successful", message: message)
     }

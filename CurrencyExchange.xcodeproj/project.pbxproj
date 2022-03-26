@@ -245,13 +245,13 @@
 		06D6A37D27EB1E8D00FC62B5 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				06D6A37E27EB1E9700FC62B5 /* WalletMock.swift */,
-				06D6A38727EB980500FC62B5 /* StorageMock.swift */,
-				06C7C84527EDE75A00980EA9 /* DataLoaderMock.swift */,
-				06C7C84B27EDEC4500980EA9 /* TestHelper.swift */,
+				06C7C85327EDF4B900980EA9 /* BaseMockable.swift */,
 				06C7C84F27EDF1CD00980EA9 /* CurrencyExchangeRateAPIMock.swift */,
 				06C7C85127EDF49F00980EA9 /* CurrencyExchangeRateServiceMock.swift */,
-				06C7C85327EDF4B900980EA9 /* BaseMockable.swift */,
+				06C7C84527EDE75A00980EA9 /* DataLoaderMock.swift */,
+				06D6A38727EB980500FC62B5 /* StorageMock.swift */,
+				06C7C84B27EDEC4500980EA9 /* TestHelper.swift */,
+				06D6A37E27EB1E9700FC62B5 /* WalletMock.swift */,
 				06C7C85727EE122800980EA9 /* XCTestCase+Extension.swift */,
 			);
 			path = Mocks;
@@ -260,14 +260,14 @@
 		06D6A38027EB2B8C00FC62B5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				06D6A38127EB2B9600FC62B5 /* Currency.swift */,
-				06D6A38327EB2BAF00FC62B5 /* TransactionList.swift */,
-				06D6A38E27EB9DAF00FC62B5 /* CurrencyExchangeModel.swift */,
 				06C7C83927EDABF500980EA9 /* AlertMessage.swift */,
-				06C7C83B27EDAC3800980EA9 /* CurrencyExchangeTransaction.swift */,
-				06C7C83D27EDBDDB00980EA9 /* CurrencyExchangeResult.swift */,
+				06D6A38127EB2B9600FC62B5 /* Currency.swift */,
 				06C7C83F27EDBDE900980EA9 /* CurrencyExchangeErrors.swift */,
+				06D6A38E27EB9DAF00FC62B5 /* CurrencyExchangeModel.swift */,
+				06C7C83D27EDBDDB00980EA9 /* CurrencyExchangeResult.swift */,
+				06C7C83B27EDAC3800980EA9 /* CurrencyExchangeTransaction.swift */,
 				06B996BC27EF143300AC986B /* LoadingState.swift */,
+				06D6A38327EB2BAF00FC62B5 /* TransactionList.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

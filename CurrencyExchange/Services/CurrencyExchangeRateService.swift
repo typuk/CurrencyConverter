@@ -90,7 +90,7 @@ private extension CurrencyExchangeRateServiceImplementation {
         let fee = try fee(for: transaction)
         let currencyBalance = try wallet.balance(for: transaction.fromCurrency)
         
-        guard currencyBalance >= (amountToConvert + fee) else {
+        guard currencyBalance >= (transaction.amount + fee) else {
             throw CurrencyExchangeErrors.notEnoughBalance
         }
         
