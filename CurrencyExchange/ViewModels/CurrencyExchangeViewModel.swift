@@ -15,7 +15,7 @@ import Combine
     
     private let wallet: Wallet
     private let exchangeRateAPIService: CurrencyExchangeRateAPI
-    private let exchangeRateService: CurrencyExchangeRateService
+    private let currencyConversionService: CurrencyConversionService
     
     private let currencyExchangeModel = PassthroughSubject<CurrencyExchangeModel, Never>()
     private let didTapSubmitButtonSubject = PassthroughSubject<Void, Never>()
@@ -28,7 +28,9 @@ import Combine
     }()
     
     private var transaction: AnyPublisher<CurrencyExchangeTransaction, Never> {
-        Publishers.CombineLatest3($sellingCurrencyAmount.map { Double($0) ?? 0 }, $sellingCurrency, $buyingCurrency)
+        let amount = $sellingCurrencyAmount.map { [weak self] in self?.numberFormatter.number(from: $0) ?? 0 }
+            .map { $0.doubleValue }
+        return Publishers.CombineLatest3(amount, $sellingCurrency, $buyingCurrency)
             .map { amount, fromCurrency, toCurrency -> CurrencyExchangeTransaction in
                 CurrencyExchangeTransaction(amount: amount, fromCurrency: fromCurrency, toCurrency: toCurrency)
             }
@@ -52,11 +54,11 @@ import Combine
     
     init(wallet: Wallet,
          exchangeRateAPIService: CurrencyExchangeRateAPI,
-         exchangeRateService: CurrencyExchangeRateService,
+         currencyConversionService: CurrencyConversionService,
          needsUpdate: AnyPublisher<Void, Never>? = nil) {
         self.wallet = wallet
         self.exchangeRateAPIService = exchangeRateAPIService
-        self.exchangeRateService = exchangeRateService
+        self.currencyConversionService = currencyConversionService
         
         let timer = Timer.publish(every: 15, on: .main, in: .default)
             .autoconnect()
@@ -108,7 +110,7 @@ private extension CurrencyExchangeViewModel {
                 guard let self = self else { return false }
                 let haveCurrencies = !currencies.isEmpty
                 do {
-                    let fee = try self.exchangeRateService.calculateTransactionFee(for: transaction)
+                    let fee = try self.currencyConversionService.calculateTransactionFee(for: transaction)
                     let currencyBalance = currencies.first(where: { $0.currency == transaction.fromCurrency })?.amount ?? 0
                     return haveCurrencies && (currencyBalance >= fee + transaction.amount) && transaction.amount > 0
                 } catch {
@@ -121,7 +123,7 @@ private extension CurrencyExchangeViewModel {
         
         transaction
             .map { [weak self] transaction in
-                (try? self?.exchangeRateService.calculateTransactionAmount(for: transaction)) ?? 0
+                (try? self?.currencyConversionService.calculateTransactionAmount(for: transaction)) ?? 0
             }
             .compactMap { [weak self] in self?.numberFormatter.string(from: $0 as NSNumber) }
             .map { "+ \($0)" }
@@ -136,7 +138,7 @@ private extension CurrencyExchangeViewModel {
         
         currencyExchangeModel
             .sink(receiveValue: { [weak self] model in
-                self?.exchangeRateService.updateExchnageRates(with: model)
+                self?.currencyConversionService.updateExchnageRates(with: model)
             })
             .store(in: &cancellableBag)
         
@@ -157,7 +159,7 @@ private extension CurrencyExchangeViewModel {
 
     func convertCurrencies(for transaction: CurrencyExchangeTransaction) {
         do {
-            let transactionResult = try exchangeRateService.convertCurrency(for: transaction)
+            let transactionResult = try currencyConversionService.convertCurrency(for: transaction)
             alertMessage = alertMessage(for: transactionResult)
         } catch {
             alertMessage = alertMessage(for: error)

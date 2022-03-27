@@ -11,7 +11,7 @@ import XCTest
 
 class ExchangeRateServiceTests: XCTestCase {
 
-    private var exchangeService: CurrencyExchangeRateService!
+    private var exchangeService: CurrencyConversionService!
     private var storage: StorageMock!
     private var wallet: WalletMock!
     

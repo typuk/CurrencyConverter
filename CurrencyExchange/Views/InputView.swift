@@ -20,6 +20,8 @@ struct InputView: View {
     @Binding var inputFieldAmount: String
     @Binding var possibleCurrencies: [CurrencyBalance]
     
+    @FocusState private var textFieldIsFocused
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -34,6 +36,7 @@ struct InputView: View {
                         .frame(width: 80, alignment: .leading)
                 } else {
                     TextField("Amount", text: $inputFieldAmount)
+                        .focused($textFieldIsFocused)
                         .keyboardType(.decimalPad)
                         .frame(width: 80, alignment: .leading)
                 }
@@ -48,6 +51,9 @@ struct InputView: View {
                 .foregroundColor(Color(UIColor.systemGray5))
                 .padding(.leading, 58)
                 .frame(height: 0.5, alignment: .trailing)
+        }
+        .onAppear {
+            textFieldIsFocused = true
         }
     }
 }

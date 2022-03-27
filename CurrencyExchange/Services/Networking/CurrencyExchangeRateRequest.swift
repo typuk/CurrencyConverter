@@ -11,7 +11,7 @@ struct CurrencyExchangeRateRequest: Request {
     let url: URL
     let method: HTTPMethod = .get
     
-    init(accessKey: String = Constants.accessKey) {
+    init(accessKey: String = Constants.backupAccessKey) {
         url = URL(string: "http://api.exchangeratesapi.io/v1/latest?access_key=\(accessKey)")!
     }
 }

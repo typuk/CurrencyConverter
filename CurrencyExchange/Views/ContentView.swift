@@ -9,16 +9,15 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
+    
+    private let viewModelFactory = ViewModelFactory()
+    
     var body: some View {
         Group {
             if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
                 Text("Running unit tests")
             } else {
-                let storage = StorageService(keyValueStoring: UserDefaults.standard)
-                let wallet = WalletService(storage: storage)
-                let viewModel = CurrencyExchangeViewModel(wallet: wallet,
-                                                          exchangeRateAPIService: CurrencyExchangeRateAPIService(dataLoader: HTTPDataLoader()),
-                                                          exchangeRateService: CurrencyExchangeRateServiceImplementation(storage: storage, wallet: wallet))
+                let viewModel = viewModelFactory.makeCurrencyExchangeViewModel()
                 ExchangeView()
                     .environmentObject(viewModel)
             }
