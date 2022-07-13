@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Deploy
-          command: xcodebuild -project CurrencyExchange.xcodeproj -scheme CurrencyExchange -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.3' test | xcbeautify
+          command: xcodebuild -project CurrencyExchange.xcodeproj -scheme CurrencyExchange -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.5' test | xcbeautify
 
 workflows:
   test_release:
