@@ -18,10 +18,4 @@ jobs:
 workflows:
   test_release:
     jobs:
-      - test
-      - deploy:
-          requires:
-            test
-          filters:
-            branches:
-              only: release
+      - deploy
