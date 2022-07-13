@@ -13,7 +13,9 @@ jobs:
       - checkout
       - run:
           name: Deploy
-          command: xcodebuild -project CurrencyExchange.xcodeproj -scheme CurrencyExchange -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.5' test | xcbeautify
+          command: 
+            device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
+            xcodebuild -project CurrencyExchange.xcodeproj -scheme CurrencyExchange -sdk iphonesimulator -destination 'platform=iOS Simulator,name=$device' test | xcpretty
 
 workflows:
   test_release:
