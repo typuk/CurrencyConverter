@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: "echo Hello, World!"
+          command: xcodebuild "build-for-testing" "-project" "CurrencyExchange.xcodeproj" "-scheme" "CurrencyConverter" "-configuration" "Debug" "-destination" "generic/platform=iOS" "-xcconfig" | xcpretty
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
