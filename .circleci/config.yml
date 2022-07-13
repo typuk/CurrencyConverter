@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Deploy
-          command: xcodebuild "build-for-testing" "-project" "CurrencyExchange.xcodeproj" "-scheme" "CurrencyConverter" "-configuration" "Debug" "-destination" "generic/platform=iOS" | xcpretty
+          command: xcodebuild "build-for-testing" "-project" "CurrencyExchange.xcodeproj" "-scheme" "CurrencyExchange" "-configuration" "Debug" "-destination" "generic/platform=iOS" | xcpretty
 
 workflows:
   test_release:
