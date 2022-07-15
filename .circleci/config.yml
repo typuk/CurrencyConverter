@@ -5,17 +5,8 @@ jobs:
       xcode: 12.5.1
     steps:
       - checkout
-      - run: fastlane scan
-  deploy:
-    macos:
-      xcode: 12.5.1
-    steps:
-      - checkout
-      - run:
-          name: Deploy
-          command: fastlane release
-
+      - run: fastlane release
 workflows:
   test_release:
     jobs:
-      - deploy
+      - test
