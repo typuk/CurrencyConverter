@@ -1,0 +1,20 @@
+default_platform(:ios)
+
+platform :ios do
+
+    lane :release do
+
+    gym(
+      configuration: "Debug",
+      project: "CurrencyExchange.xcodeproj",
+      scheme: "CurrencyExchange",
+      skip_archive: true
+    )
+
+    run_tests(
+        project: "CurrencyExchange.xcodeproj",
+        devices: ["iPhone 12"],
+        scheme: "CurrencyExchange"
+    )
+  end
+end

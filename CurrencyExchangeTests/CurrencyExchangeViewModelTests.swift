@@ -24,7 +24,7 @@ class CurrencyExchangeViewModelTests: XCTestCase {
         wallet = WalletMock()
         exchangeRateAPIService = CurrencyExchangeRateAPIMock()
         exchangeRateService = CurrencyExchangeRateServiceMock()
-        viewModel = CurrencyExchangeViewModel(wallet: wallet, exchangeRateAPIService: exchangeRateAPIService, exchangeRateService: exchangeRateService)
+        viewModel = CurrencyExchangeViewModel(wallet: wallet, exchangeRateAPIService: exchangeRateAPIService, currencyConversionService: exchangeRateService)
         cancellables = []
     }
     
@@ -95,7 +95,7 @@ class CurrencyExchangeViewModelTests: XCTestCase {
         
         viewModel = CurrencyExchangeViewModel(wallet: wallet,
                                               exchangeRateAPIService: exchangeRateAPIService,
-                                              exchangeRateService: exchangeRateService,
+                                              currencyConversionService: exchangeRateService,
                                               needsUpdate: subject.eraseToAnyPublisher())
         
         wallet.availableBalancesSubject.send([CurrencyBalance(currency: .euro, amount: 100), CurrencyBalance(currency: "USD", amount: 200)])
